@@ -35,4 +35,28 @@
 			<ymax>111</ymax>
 		</bndbox>
 	</object>
+	<object>
+		<name>scrap</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>13</xmin>
+			<ymin>399</ymin>
+			<xmax>87</xmax>
+			<ymax>466</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>scrap</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>90</xmin>
+			<ymin>465</ymin>
+			<xmax>185</xmax>
+			<ymax>547</ymax>
+		</bndbox>
+	</object>
 </annotation>
