@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 from matplotlib import pyplot as plt
+import logging
 
 
 class InvalidScreenError(Exception):
@@ -14,10 +15,15 @@ class GameSensor:
         self.player_inventory = load_player_inventory_template()
         self.storage_interact_instruction = load_storage_interact_instruction_template()
 
+        self.inventory_trade_backpack = load_inventory_trade_backpack_template()
+        self.inventory_trade_storage_box = load_inventory_trade_storage_box_template()
+        self.player_inventory_backpack = load_player_inventory_backpack_template()
+        self.player_inventory_equipment = load_player_inventory_equipment_template()
+
         self.identifiable_inventory = {
-            "salvage_item": load_scrap_item_template(),
+            "scrap": load_scrap_item_template(),
             "technology_part": load_technology_part_template(),
-            "empty_slot": load_empty_slot_template()
+            "empty": load_empty_slot_template()
         }
 
     def is_player_inventory_screen(self, image) -> bool:
@@ -25,14 +31,27 @@ class GameSensor:
         calculates if player is on inventory screen
         :return:
         """
-        raise NotImplementedError
+        threshold = .3
+        if image.size == 786432:
+            image = crop_inventory_from_screen(image)
+
+        bp_match = image_match(image, self.player_inventory_backpack)
+        eq_match = image_match(image, self.player_inventory_equipment)
+        return min(eq_match, bp_match) >= threshold
 
     def is_inventory_share_screen(self, image) -> bool:
         """
         calculates if player is on inventory share screen
         :return:
         """
-        raise NotImplementedError
+        threshold = .5
+        if image.size == 786432:
+            image = crop_inventory_from_screen(image)
+
+        bp_match = image_match(image, self.inventory_trade_backpack)
+        sb_match = image_match(image, self.inventory_trade_storage_box)
+
+        return min(sb_match, bp_match) >= threshold
 
     def identify_inventory_slot(self, image):
         """
@@ -41,7 +60,7 @@ class GameSensor:
         :return:
         """
         best_match = "other"
-        best_score = .5
+        best_score = .2
         for name, template in self.identifiable_inventory.items():
             match = image_match(image, template)
             if match > .8:
@@ -207,8 +226,8 @@ class GameSensor:
 
 # 1024 x 768 settings
 SCREEN_DIMENSIONS = (1024, 768)
-INVENTORY_ANCHOR = (380, 106)
-INVENTORY_DIMENSIONS = (261, 362)
+INVENTORY_ANCHOR = (380, 104)
+INVENTORY_DIMENSIONS = (262, 362)
 INVENTORY_TOP_SLOT_ANCHOR = (386, 132)
 INVENTORY_SLOT_DIMENSIONS = (48, 48)
 INVENTORY_BOTTOM_SLOT_ANCHOR = (386, 313)
@@ -273,26 +292,64 @@ def crop_items_from_half_inventory(img, num_item_slots):
 
 def load_inventory_trade_template():
     img = cv2.imread("images/screens/1024-768/inventory-trade-1.png", GRAYSCALE_LOAD)
+    if img is None:
+        raise FileNotFoundError
     return crop_inventory_from_screen(img)
+
+
+def load_inventory_trade_backpack_template():
+    img = cv2.imread("images/snippets/1024-768/inventory-trade-backpack-1.png", GRAYSCALE_LOAD)
+    if img is None:
+        raise FileNotFoundError
+    return img
+
+
+def load_inventory_trade_storage_box_template():
+    img = cv2.imread("images/snippets/1024-768/inventory-trade-storage-box-1.png", GRAYSCALE_LOAD)
+    if img is None:
+        raise FileNotFoundError
+    return img
+
+
+def load_player_inventory_backpack_template():
+    img = cv2.imread("images/snippets/1024-768/player-inventory-backpack-1.png", GRAYSCALE_LOAD)
+    if img is None:
+        raise FileNotFoundError
+    return img
+
+
+def load_player_inventory_equipment_template():
+    img = cv2.imread("images/snippets/1024-768/player-inventory-equipment-1.png", GRAYSCALE_LOAD)
+    if img is None:
+        raise FileNotFoundError
+    return img
 
 
 def load_player_inventory_template():
     img = cv2.imread("images/screens/1024-768/player-inventory-1.png", GRAYSCALE_LOAD)
+    if img is None:
+        raise FileNotFoundError
     return crop_inventory_from_screen(img)
 
 
 def load_scrap_item_template():
     img = cv2.imread("images/snippets/1024-768/inventory-scrap-1.png", GRAYSCALE_LOAD)
+    if img is None:
+        raise FileNotFoundError
     return img
 
 
 def load_technology_part_template():
     img = cv2.imread("images/snippets/1024-768/inventory-technology-part-1.png", GRAYSCALE_LOAD)
+    if img is None:
+        raise FileNotFoundError
     return img
 
 
 def load_empty_slot_template():
     img = cv2.imread("images/snippets/1024-768/inventory-empty-slot-1.png", GRAYSCALE_LOAD)
+    if img is None:
+        raise
     return img
 
 
@@ -302,6 +359,8 @@ def load_storage_box_inventory_label_template():
 
 def load_storage_interact_instruction_template():
     img = cv2.imread("images/snippets/1024-768/storage-box-toggle-1.png", GRAYSCALE_LOAD)
+    if img is None:
+        raise FileNotFoundError
     return img
 
 
