@@ -1,4 +1,9 @@
+Cython==0.29.12
 numpy>=1.16.4
 opencv-contrib-python>=4.1.0.25
 matplotlib>=3.1.1
 pyautogui>=0.9.45
+"git+https://github.com/philferriere/cocoapi.git#egg=pycocotools&subdirectory=PythonAPI"
+pandas==0.24.2
+tensorflow
+tensorflow-gpu

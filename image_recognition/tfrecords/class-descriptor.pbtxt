@@ -1,0 +1,25 @@
+item {
+    id: 1
+    name: 'storage_box'             
+}
+
+item {
+    id: 2
+    name: 'scrap'             
+}
+
+item {
+    id: 3
+    name: 'player'             
+}
+
+item {
+    id: 4
+    name: 'foxhole'             
+}
+
+item {
+    id: 5
+    name: 'other'             
+}
+
